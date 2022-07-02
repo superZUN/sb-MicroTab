@@ -21,8 +21,7 @@ import {
 // registerAllModules();
 
 const DataContainer = () => {
-  const count = useSelector((RootState) => state.counter.value);
-  const mydata = useSelector(( RootState) => state.mydata.myData);
+  const mydata = useSelector((state) => state.mydata.myData);
   const dispatch = useDispatch();
 
   const onBeforeHotChange = (changes) => {

@@ -3,7 +3,6 @@ import React, { useRef } from 'react';
 import styles from './QuickChart.module.css';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { decrement, increment } from '../../redux/counterSlice';
 import { initialize, updateData } from '../../redux/myDataSlice';
 
 import Highcharts from 'highcharts';
@@ -12,7 +11,7 @@ import bellCurve from 'highcharts/modules/histogram-bellcurve'; //module
 bellCurve(Highcharts); //init module
 
 const QuickChart = () => {
-  const selectedData = useSelector((RootState) => state.mydata.selectedData);
+  const selectedData = useSelector((state) => state.mydata.selectedData);
   const dispatch = useDispatch();
   const options = {
     chart: {
@@ -67,7 +66,7 @@ const QuickChart = () => {
         <HighchartsReact
           highcharts={Highcharts}
           options={options}
-          ref={chartComponentRef}
+          // ref={chartComponentRef}
           // {...props}
         />
       </div>
