@@ -8,10 +8,15 @@ import { initialize, updateData } from '../../redux/myDataSlice';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import bellCurve from 'highcharts/modules/histogram-bellcurve'; //module
+import CorrChart from './CorrChart';
+
 bellCurve(Highcharts); //init module
 
 const QuickChart = () => {
   const selectedData = useSelector((state) => state.mydata.selectedData);
+  const selectedDataCorr = useSelector(
+    (state) => state.mydata.selectedDataCorr
+  );
   const dispatch = useDispatch();
   const options = {
     chart: {
@@ -69,6 +74,9 @@ const QuickChart = () => {
           // ref={chartComponentRef}
           // {...props}
         />
+      </div>
+      <div className={styles.ChartBox}>
+        {selectedDataCorr != null ? <CorrChart /> : 'null'}
       </div>
     </div>
   );

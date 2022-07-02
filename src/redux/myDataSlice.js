@@ -1,10 +1,15 @@
-import { createSlice } from '@reduxjs/toolkit';
+import SignalCellularNullSharp from '@mui/icons-material/SignalCellularNullSharp';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import calculateCorrelation from 'calculate-correlation';
+import * as statFuncs from './statFunctions';
+import * as myFuncs from './myDataSliceFunction';
 
 export const mydataState = () => {
   myData: [];
   selectedData: [];
+  selectedDataIsAvailable: false;
+  selectedDataCorr: [];
+  selectedDataCorrIsAvailable: false;
 };
 
 const genInitData = (r, c) => {
@@ -13,9 +18,9 @@ const genInitData = (r, c) => {
     let row = [];
     for (let j = 0; j < c; j++) {
       j % 2 == 0
-        ? row.push(Math.random() * Math.random() * (i + 1) * Math.sin(i))
-        : row.push(Math.random() * (i + 1) * Math.cos(i));
-      // row.push(0);
+        ? row.push(Math.random() * (i + 1) * Math.cos(i + 1))
+        : row.push(Math.random() * (i + 1) * Math.sin(i + 1));
+      // row.push(null);
     }
     arr.push(row);
   }
@@ -24,11 +29,13 @@ const genInitData = (r, c) => {
 };
 
 const initialState = {
-  myData: genInitData(20, 26),
+  myData: genInitData(10, 26),
   selectedData: [],
+  selectedDataCorr: [],
+  selectedDataIsAvailable: false,
 };
 
-const mydataSlice = createSlice({
+export const mydataSlice = createSlice({
   name: 'myData',
   initialState,
   reducers: {
@@ -62,59 +69,44 @@ const mydataSlice = createSlice({
       state.myData = newData;
     },
     updateSelection: (state, action) => {
-      //afterSelection(row, column, row2, column2, preventScrolling, selectionLayerLevel)
-
       let c1, c2, r1, r2;
+
       const data = [...state.myData];
       // console.log(data);
       let selection = [];
       state.selectedData = [];
 
-      if (action.payload.r1 == -1) {
-        //컬럼 선택 시
-        // console.log('column selected');
-        c1 =
-          action.payload.c1 < action.payload.c2
-            ? action.payload.c1
-            : action.payload.c2;
-        c2 =
-          action.payload.c1 < action.payload.c2
-            ? action.payload.c2
-            : action.payload.c1;
-        r1 = 0;
-        r2 = action.payload.r2;
-      } else {
-        //영역 선택 시
-        c1 =
-          action.payload.c1 < action.payload.c2
-            ? action.payload.c1
-            : action.payload.c2;
-        c2 =
-          action.payload.c1 < action.payload.c2
-            ? action.payload.c2
-            : action.payload.c1;
-        r1 =
-          action.payload.r1 < action.payload.r2
-            ? action.payload.r1
-            : action.payload.r2;
-        r2 =
-          action.payload.r1 < action.payload.r2
-            ? action.payload.r2
-            : action.payload.r1;
+      //data 유무 확인 (all null 이면?)
+      let dataFlag = false;
+
+      //C1,C2,R1,R2 정의
+      [c1, c2, r1, r2] = myFuncs.defineRC(action.payload);
+
+      //data 유효성 검사 :데이터가 하나라도 있으면 flag=true
+      for (let c = c1; c <= c2; c++) {
+        for (let r = r1; r <= r2; r++) {
+          data[r][c] != null ? (dataFlag = true) : null;
+        }
       }
 
-      for (let c = c1; c <= c2; c++) {
-        let tmpRow = [];
-        for (let r = r1; r <= r2; r++) {
-          tmpRow.push(data[r][c]);
+      //check data is available?
+      if (dataFlag) {
+        for (let c = c1; c <= c2; c++) {
+          let tmpRow = [];
+          for (let r = r1; r <= r2; r++) {
+            data[r][c] != null ? tmpRow.push(data[r][c]) : tmpRow.push();
+          }
+          selection.push(tmpRow);
         }
-        selection.push(tmpRow);
+      } else {
+        selection.push([0]);
       }
 
       //공통 State update
       for (let i = 0; i <= c2 - c1; i++) {
         let plotData = { type: 'histogram', data: selection[i] };
         let plotHistogram = {
+          name: 'Data' + i,
           type: 'histogram',
           xAxis: 1,
           yAxis: 1,
@@ -123,7 +115,7 @@ const mydataSlice = createSlice({
           zIndex: -1,
         };
         let plotScatter = {
-          name: 'Data',
+          name: 'Data' + i,
           type: 'scatter',
           data: selection[i],
           id: 'pData' + i,
@@ -134,12 +126,24 @@ const mydataSlice = createSlice({
         // state.selectedData.push(plotData);
         state.selectedData.push(plotHistogram);
         state.selectedData.push(plotScatter);
+      }
 
-        //2*5 이상일 때 상관계수 분석
-        if (selection.length >= 2 && selection[0].length >= 5) {
-          // console.log('correlation');
-          console.log(calculateCorrelation(selection[0], selection[1]));
+      //2*5 이상일 때 상관계수 분석
+      if (selection.length >= 2 && selection[0].length >= 5) {
+        let corrResult = [];
+        for (let i = 0; i < selection.length - 1; i++) {
+          for (let j = i + 1; j < selection.length; j++) {
+            corrResult.push([
+              i + 1,
+              j + 1,
+              statFuncs.getCorrelation(selection[i], selection[j]),
+              // ttest(selection[i], selection[j], { mu: 0 }).pValue(),
+            ]);
+          }
         }
+        state.selectedDataCorr = corrResult;
+      } else {
+        state.selectedDataCorr = null;
       }
     },
   },
