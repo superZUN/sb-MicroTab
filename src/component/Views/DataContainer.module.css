@@ -1,0 +1,5 @@
+.hotTable {
+  width: 10000px;
+  height: 50000px;
+  overflow: scroll;
+}

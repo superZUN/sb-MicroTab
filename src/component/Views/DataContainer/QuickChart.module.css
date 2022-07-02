@@ -1,0 +1,9 @@
+.QuickChart {
+  width: 90vw;
+  background-color: red;
+}
+
+.ChartBox {
+  width: 400px;
+  padding: 10px;
+}
