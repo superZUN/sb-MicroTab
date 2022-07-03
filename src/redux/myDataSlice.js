@@ -29,7 +29,7 @@ const genInitData = (r, c) => {
 };
 
 const initialState = {
-  myData: genInitData(10, 26),
+  myData: genInitData(50, 26),
   selectedData: [],
   selectedDataCorr: [],
   selectedDataIsAvailable: false,
@@ -69,18 +69,24 @@ export const mydataSlice = createSlice({
       state.myData = newData;
     },
     updateSelection: (state, action) => {
-      let c1, c2, r1, r2;
+      let c1, c2, r1, r2, p, l;
 
       const data = [...state.myData];
       // console.log(data);
       let selection = [];
-      state.selectedData = [];
 
       //data 유무 확인 (all null 이면?)
       let dataFlag = false;
 
       //C1,C2,R1,R2 정의
       [c1, c2, r1, r2] = myFuncs.defineRC(action.payload);
+
+      //multi selection일 때 selection추가 일 경우 selectedData  초기화 하지 않음.
+      l = action.payload.l;
+      console.log('level:', l);
+      l == 0
+        ? (state.selectedData = [])
+        : (state.selectedData = [...state.selectedData]);
 
       //data 유효성 검사 :데이터가 하나라도 있으면 flag=true
       for (let c = c1; c <= c2; c++) {
@@ -100,25 +106,27 @@ export const mydataSlice = createSlice({
         }
       } else {
         selection.push([0]);
+        ``;
       }
 
+      //plot 그리기 용
       //공통 State update
       for (let i = 0; i <= c2 - c1; i++) {
         let plotData = { type: 'histogram', data: selection[i] };
         let plotHistogram = {
-          name: 'Data' + i,
+          name: 'Data' + (i + l),
           type: 'histogram',
           xAxis: 1,
           yAxis: 1,
-          baseSeries: 'pData' + i,
+          baseSeries: 'pData' + (i + l),
 
           zIndex: -1,
         };
         let plotScatter = {
-          name: 'Data' + i,
+          name: 'Data' + (i + l),
           type: 'scatter',
           data: selection[i],
-          id: 'pData' + i,
+          id: 'pData' + (i + l),
           marker: {
             radius: 1.5,
           },
@@ -127,16 +135,27 @@ export const mydataSlice = createSlice({
         state.selectedData.push(plotHistogram);
         state.selectedData.push(plotScatter);
       }
+      console.log(state.selectedData.length);
+      console.log('selectedData:', state.selectedData);
 
       //2*5 이상일 때 상관계수 분석
-      if (selection.length >= 2 && selection[0].length >= 5) {
+      if (
+        state.selectedData.length >= 4 &&
+        state.selectedData[1].data.length >= 5
+      ) {
         let corrResult = [];
-        for (let i = 0; i < selection.length - 1; i++) {
-          for (let j = i + 1; j < selection.length; j++) {
+        for (let i = 0; i < state.selectedData.length / 2 - 1; i++) {
+          for (let j = i + 1; j < state.selectedData.length / 2; j++) {
+            console.log('d1:', state.selectedData[(i + 1) * 2 - 1].data);
+            console.log('d2:', state.selectedData[j * 2 - 1].data);
+
             corrResult.push([
               i + 1,
               j + 1,
-              statFuncs.getCorrelation(selection[i], selection[j]),
+              statFuncs.getCorrelation(
+                state.selectedData[(i + 1) * 2 - 1].data,
+                state.selectedData[(j + 1) * 2 - 1].data
+              ),
               // ttest(selection[i], selection[j], { mu: 0 }).pValue(),
             ]);
           }

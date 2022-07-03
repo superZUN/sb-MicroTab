@@ -18,6 +18,6 @@ export function defineRC(selection) {
     r1 = selection.r1 < selection.r2 ? selection.r1 : selection.r2;
     r2 = selection.r1 < selection.r2 ? selection.r2 : selection.r1;
   }
-  console.log(c1, c2, r1, r2);
+  // console.log(c1, c2, r1, r2);
   return [c1, c2, r1, r2];
 }

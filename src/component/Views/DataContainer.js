@@ -30,8 +30,8 @@ const DataContainer = () => {
     return false;
   };
 
-  const onAfterSelection = (r1,c1, r2,c2)=> {
-    dispatch(updateSelection({r1:r1,c1:c1,r2:r2,c2:c2}));
+  const onAfterSelection = (r1,c1, r2,c2, preventScrolling, selectionLayerLevel)=> {
+    dispatch(updateSelection({r1:r1,c1:c1,r2:r2,c2:c2, p:preventScrolling, l:selectionLayerLevel}));
 	},
   return (
     <div id="hot-app">
@@ -47,7 +47,7 @@ const DataContainer = () => {
           afterSelection={onAfterSelection}
           rowHeights={23}
           colWidths={100}
-          selectionMode="range" // 'single', 'range' or 'multiple',
+          selectionMode="multiple" // 'single', 'range' or 'multiple',
           licenseKey="non-commercial-and-evaluation"
         />
         
