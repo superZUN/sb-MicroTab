@@ -3,6 +3,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import * as statFuncs from './statFunctions';
 import * as myFuncs from './myDataSliceFunction';
+import Arraystat from 'arraystat';
 
 export const mydataState = () => {
   myData: [];
@@ -12,6 +13,7 @@ export const mydataState = () => {
   selectedDataCorrIsAvailable: false;
   colHeaders: [];
   selectedHeaders: [];
+  selectedDataBox: [];
 };
 
 const genInitData = (r, c) => {
@@ -65,6 +67,7 @@ const initialState = {
     'AA',
   ],
   selectedHeaders: [],
+  selectedDataBox: [],
 };
 
 export const mydataSlice = createSlice({
@@ -104,7 +107,7 @@ export const mydataSlice = createSlice({
       let c1, c2, r1, r2, p, l;
 
       const data = [...state.myData];
-      // console.log(data);
+
       let selection = [];
 
       //data 유무 확인 (all null 이면?)
@@ -120,6 +123,10 @@ export const mydataSlice = createSlice({
       l == 0
         ? (state.selectedData = [])
         : (state.selectedData = [...state.selectedData]);
+      //box plot용 데이터
+      l == 0
+        ? (state.selectedDataBox = [])
+        : (state.selectedDataBox = [...state.selectedDataBox]);
 
       //colHeader 가져오기
       l == 0
@@ -174,16 +181,20 @@ export const mydataSlice = createSlice({
             radius: 1.5,
           },
         };
-
-        //box plot data
-        // [760, 801, 848, 895, 965],minimum / low Q / Median / high Q / maximum
+        let boxData = [
+          Arraystat(selection[i]).min,
+          Arraystat(selection[i]).q1,
+          Arraystat(selection[i]).median,
+          Arraystat(selection[i]).q3,
+          Arraystat(selection[i]).max,
+        ];
 
         // state.selectedData.push(plotData);
         state.selectedData.push(plotHistogram);
         state.selectedData.push(plotScatter);
+        state.selectedDataBox.push(boxData);
       }
-      // console.log(state.selectedData.length);
-      // console.log('selectedData:', state.selectedData);
+      // console.log('selectedDataBox:', state.selectedDataBox);
 
       //2*5 이상일 때 상관계수 분석
       if (

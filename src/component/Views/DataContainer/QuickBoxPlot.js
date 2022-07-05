@@ -3,7 +3,6 @@ import React, { useRef } from 'react';
 import styles from './Chart.module.css';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { initialize, updateData } from '../../redux/myDataSlice';
 
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
@@ -12,9 +11,12 @@ import HighchartsMore from 'highcharts/highcharts-more';
 HighchartsMore(Highcharts);
 
 const QuickBoxPlot = () => {
-  const selectedData = useSelector((state) => state.mydata.selectedData);
   const selectedHeaders = useSelector((state) => state.mydata.selectedHeaders);
-
+  const selectedDataBox = useSelector((state) => state.mydata.selectedDataBox);
+  // let selectedDataBox = [
+  //   [1, 2, 3, 4, 5],
+  //   [2, 3, 4, 5, 6],
+  // ];
   const dispatch = useDispatch();
   const options = {
     chart: {
@@ -60,13 +62,7 @@ const QuickBoxPlot = () => {
     series: [
       {
         name: 'Observations',
-        data: [
-          [760, 801, 848, 895, 965],
-          [733, 853, 939, 980, 1080],
-          [714, 762, 817, 870, 918],
-          [724, 802, 806, 871, 950],
-          [834, 836, 864, 882, 910],
-        ],
+        data: selectedDataBox,
         tooltip: {
           headerFormat: '<em>Experiment No {point.key}</em><br/>',
         },
@@ -77,10 +73,10 @@ const QuickBoxPlot = () => {
         type: 'scatter',
         data: [
           // x, y positions where 0 is the first category
-          [0, 644],
-          [4, 718],
-          [4, 951],
-          [4, 969],
+          // [0, 644],
+          // [4, 718],
+          // [4, 951],
+          // [4, 969],
         ],
         marker: {
           fillColor: 'white',
