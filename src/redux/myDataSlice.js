@@ -10,6 +10,8 @@ export const mydataState = () => {
   selectedDataIsAvailable: false;
   selectedDataCorr: [];
   selectedDataCorrIsAvailable: false;
+  colHeaders: [];
+  selectedHeaders: [];
 };
 
 const genInitData = (r, c) => {
@@ -33,6 +35,36 @@ const initialState = {
   selectedData: [],
   selectedDataCorr: [],
   selectedDataIsAvailable: false,
+  colHeaders: [
+    'A',
+    'B',
+    'C',
+    'D',
+    'E',
+    'F',
+    'G',
+    'H',
+    'I',
+    'J',
+    'K',
+    'L',
+    'M',
+    'N',
+    'O',
+    'P',
+    'Q',
+    'R',
+    'S',
+    'T',
+    'U',
+    'V',
+    'W',
+    'X',
+    'Y',
+    'Z',
+    'AA',
+  ],
+  selectedHeaders: [],
 };
 
 export const mydataSlice = createSlice({
@@ -83,10 +115,21 @@ export const mydataSlice = createSlice({
 
       //multi selection일 때 selection추가 일 경우 selectedData  초기화 하지 않음.
       l = action.payload.l;
-      console.log('level:', l);
+
+      //layerLevel에 따라 데이터 비우거나 추가하기
       l == 0
         ? (state.selectedData = [])
         : (state.selectedData = [...state.selectedData]);
+
+      //colHeader 가져오기
+      l == 0
+        ? (state.selectedHeaders = [])
+        : (state.selectedHeaders = [...state.selectedHeaders]);
+      for (let i = c1; i <= c2; i++) {
+        // console.log(i);
+        state.selectedHeaders.push(state.colHeaders[i]);
+      }
+      // console.log('selectedHeader:', state.selectedHeaders);
 
       //data 유효성 검사 :데이터가 하나라도 있으면 flag=true
       for (let c = c1; c <= c2; c++) {
@@ -135,8 +178,8 @@ export const mydataSlice = createSlice({
         state.selectedData.push(plotHistogram);
         state.selectedData.push(plotScatter);
       }
-      console.log(state.selectedData.length);
-      console.log('selectedData:', state.selectedData);
+      // console.log(state.selectedData.length);
+      // console.log('selectedData:', state.selectedData);
 
       //2*5 이상일 때 상관계수 분석
       if (
@@ -146,12 +189,12 @@ export const mydataSlice = createSlice({
         let corrResult = [];
         for (let i = 0; i < state.selectedData.length / 2 - 1; i++) {
           for (let j = i + 1; j < state.selectedData.length / 2; j++) {
-            console.log('d1:', state.selectedData[(i + 1) * 2 - 1].data);
-            console.log('d2:', state.selectedData[j * 2 - 1].data);
+            // console.log('d1:', state.selectedData[(i + 1) * 2 - 1].data);
+            // console.log('d2:', state.selectedData[j * 2 - 1].data);
 
             corrResult.push([
-              i + 1,
-              j + 1,
+              state.selectedHeaders[i],
+              state.selectedHeaders[j],
               statFuncs.getCorrelation(
                 state.selectedData[(i + 1) * 2 - 1].data,
                 state.selectedData[(j + 1) * 2 - 1].data

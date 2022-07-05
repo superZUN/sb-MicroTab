@@ -22,6 +22,7 @@ import {
 
 const DataContainer = () => {
   const mydata = useSelector((state) => state.mydata.myData);
+  const colHeaderNames = useSelector((state) => state.mydata.colHeaders)
   const dispatch = useDispatch();
 
   const onBeforeHotChange = (changes) => {
@@ -41,13 +42,14 @@ const DataContainer = () => {
           data={mydata}
           width= '100%'
           height='50vh'
-          colHeaders={true}
+          colHeaders = {colHeaderNames}
+          // colHeaders={true}
           rowHeaders={true}
           beforeChange={onBeforeHotChange}
           afterSelection={onAfterSelection}
           rowHeights={23}
           colWidths={100}
-          selectionMode="multiple" // 'single', 'range' or 'multiple',
+          selectionMode="multiple" // 'si ngle', 'range' or 'multiple',
           licenseKey="non-commercial-and-evaluation"
         />
         

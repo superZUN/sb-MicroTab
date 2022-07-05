@@ -19,5 +19,7 @@ export function defineRC(selection) {
     r2 = selection.r1 < selection.r2 ? selection.r2 : selection.r1;
   }
   // console.log(c1, c2, r1, r2);
+  c1 == -1 ? (c1 = 0) : null;
+  // console.log(c1, c2, r1, r2);
   return [c1, c2, r1, r2];
 }
