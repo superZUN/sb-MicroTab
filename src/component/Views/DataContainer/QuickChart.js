@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 
-import styles from './QuickChart.module.css';
+import styles from './Chart.module.css';
 
 import { useSelector, useDispatch } from 'react-redux';
 import { initialize, updateData } from '../../redux/myDataSlice';
@@ -8,15 +8,12 @@ import { initialize, updateData } from '../../redux/myDataSlice';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import bellCurve from 'highcharts/modules/histogram-bellcurve'; //module
-import CorrChart from './CorrChart';
 
 bellCurve(Highcharts); //init module
 
 const QuickChart = () => {
   const selectedData = useSelector((state) => state.mydata.selectedData);
-  const selectedDataCorr = useSelector(
-    (state) => state.mydata.selectedDataCorr
-  );
+
   const dispatch = useDispatch();
   const options = {
     chart: {
@@ -66,18 +63,13 @@ const QuickChart = () => {
   };
   const chartComponentRef = useRef < HighchartsReact.RefObject > null;
   return (
-    <div id="quickChart" className={styles.QuickChart}>
-      <div className={styles.ChartBox}>
-        <HighchartsReact
-          highcharts={Highcharts}
-          options={options}
-          // ref={chartComponentRef}
-          // {...props}
-        />
-      </div>
-      <div className={styles.ChartBox}>
-        {selectedDataCorr != null ? <CorrChart /> : 'null'}
-      </div>
+    <div className={styles.ChartBox}>
+      <HighchartsReact
+        highcharts={Highcharts}
+        options={options}
+        // ref={chartComponentRef}
+        // {...props}
+      />
     </div>
   );
 };

@@ -1,6 +1,8 @@
 import * as React from 'react';
 import styles from './DataContainer.module.css';
 import QuickChart from './DataContainer/QuickChart';
+import QuickBoxPlot from './DataContainer/QuickBoxPlot';
+import CorrChart from './DataContainer/CorrChart';
 
 import 'handsontable/dist/handsontable.full.css';
 
@@ -23,6 +25,8 @@ import {
 const DataContainer = () => {
   const mydata = useSelector((state) => state.mydata.myData);
   const colHeaderNames = useSelector((state) => state.mydata.colHeaders)
+  
+
   const dispatch = useDispatch();
 
   const onBeforeHotChange = (changes) => {
@@ -36,7 +40,11 @@ const DataContainer = () => {
 	},
   return (
     <div id="hot-app">
-      <QuickChart />
+      <div id="quickChart" className={styles.QuickChart}>
+        <QuickChart />
+        <QuickBoxPlot />
+        <CorrChart />
+      </div>
       <div styleName={styles.hotTable}>
         <HotTable
           data={mydata}
@@ -52,7 +60,6 @@ const DataContainer = () => {
           selectionMode="multiple" // 'si ngle', 'range' or 'multiple',
           licenseKey="non-commercial-and-evaluation"
         />
-        
       </div>
     </div>
   );

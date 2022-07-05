@@ -174,6 +174,10 @@ export const mydataSlice = createSlice({
             radius: 1.5,
           },
         };
+
+        //box plot data
+        // [760, 801, 848, 895, 965],minimum / low Q / Median / high Q / maximum
+
         // state.selectedData.push(plotData);
         state.selectedData.push(plotHistogram);
         state.selectedData.push(plotScatter);
@@ -204,6 +208,7 @@ export const mydataSlice = createSlice({
           }
         }
         state.selectedDataCorr = corrResult;
+        // console.log(state.selectedDataCorr);
       } else {
         state.selectedDataCorr = null;
       }

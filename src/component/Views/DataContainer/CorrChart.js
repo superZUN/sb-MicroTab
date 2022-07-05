@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 
 import { useSelector, useDispatch } from 'react-redux';
-import styles from './QuickChart.module.css';
+import styles from './Chart.module.css';
 
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
@@ -11,12 +11,16 @@ const CorrChart = () => {
     (state) => state.mydata.selectedDataCorr
   );
   return (
-    <div id="CorrChart" className={styles.CorrChart}>
-      {selectedDataCorr.map((item) => (
-        <div>
-          {item[0]} x {item[1]} : {item[2]}
+    <div id="CorrChart" className={styles.ChartBox}>
+      {selectedDataCorr != null ? (
+        <div className={styles.ChartBox}>
+          {selectedDataCorr.map((item) => (
+            <div>
+              {item[0]} x {item[1]} : {item[2]}
+            </div>
+          ))}
         </div>
-      ))}
+      ) : null}
     </div>
   );
 };
